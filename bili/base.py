@@ -1,15 +1,17 @@
+from typing import Dict
+
 import aiohttp
 
 
 class Network:
-    def __init__(self, cookies=None) -> None:
+    def __init__(self, cookies: Dict[str, str] = None) -> None:
         cookiejar = aiohttp.CookieJar()
         if cookies:
             cookiejar.update_cookies(cookies)
         self._session = aiohttp.ClientSession(cookie_jar=cookiejar)
 
     async def get(self, url: str, params=None) -> dict:
-        async with self._session.get(url, body=params) as resp:
+        async with self._session.get(url, params=params) as resp:
             if resp.status != 200:
                 raise ConnectionError(resp.status, await resp.read())
             return await resp.json()
@@ -22,5 +24,21 @@ class Network:
 
 
 class APIBase:
+    base = None
+
     def __init__(self, network: Network) -> None:
+        if not self.base:
+            raise AttributeError("base url not set")
         self._network = network
+
+    def _join_url(self, path: str) -> str:
+        return self.base + path
+
+    async def verified(self) -> bool:
+        return True
+
+    async def get(self, path: str, params=None) -> dict:
+        return await self._network.get(self._join_url(path), params)
+
+    async def post(self, path: str, data=None) -> dict:
+        return await self._network.post(self._join_url(path), data)
