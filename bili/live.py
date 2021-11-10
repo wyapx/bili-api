@@ -9,7 +9,7 @@ class Live(APIBase):
         self.room_id = room_id
 
     async def _get_live(self, call_api: str, api_version=1) -> dict:
-        return await self.get(f"/xlive/web-room/v{api_version}/index/{call_api}", {"room_id": self.room_id})
+        return await self._get(f"/xlive/web-room/v{api_version}/index/{call_api}", {"room_id": self.room_id})
 
     async def user_info_in_room(self) -> dict:
         return await self._get_live("getInfoByUser")
@@ -20,7 +20,5 @@ class Live(APIBase):
     async def room_play_info(self) -> dict:
         return await self._get_live("getRoomPlayInfo")
 
-    async def chat_conf(self, room_id: int) -> dict:
-        return await self.get("/room/v1/Danmu/getConf", {"room_id": room_id})
-
-    async def
+    async def chat_conf(self) -> dict:
+        return await self._get("/room/v1/Danmu/getConf", {"room_id": self.room_id})

@@ -2,6 +2,8 @@ from typing import Dict
 
 import aiohttp
 
+from .utils import assert_success
+
 
 class Network:
     def __init__(self, cookies: Dict[str, str] = None) -> None:
@@ -30,15 +32,24 @@ class APIBase:
         if not self.base:
             raise AttributeError("base url not set")
         self._network = network
+        self._verified = None
 
     def _join_url(self, path: str) -> str:
         return self.base + path
 
-    async def verified(self) -> bool:
-        return True
+    async def verify_auth(self):
+        if self._verified is None:
+            assert_success(
+                await self._network.get("https://api.bilibili.com/x/space/myinfo")
+            )
+            self._verified = True
 
-    async def get(self, path: str, params=None) -> dict:
-        return await self._network.get(self._join_url(path), params)
+    async def _get(self, path: str, params=None) -> dict:
+        return assert_success(
+            await self._network.get(self._join_url(path), params)
+        )
 
-    async def post(self, path: str, data=None) -> dict:
-        return await self._network.post(self._join_url(path), data)
+    async def _post(self, path: str, data=None) -> dict:
+        return assert_success(
+            await self._network.post(self._join_url(path), data)
+        )

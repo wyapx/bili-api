@@ -9,17 +9,16 @@ class User(APIBase):
         self.uid = uid
 
     async def my_info(self) -> dict:
-        return await self.get("/space/myinfo")
+        return await self._get("/space/myinfo")
 
     async def info(self) -> dict:
-        return await self.get("/space/acc/info", {"mid": self.uid})
+        return await self._get("/space/acc/info", {"mid": self.uid})
 
     async def stat(self) -> dict:
-        return await self.get("/relation/stat", {"vmid": self.uid})
+        return await self._get("/relation/stat", {"vmid": self.uid})
 
     async def upstat(self) -> dict:
-        return await self.get("/space/upstat", {"mid": self.uid})
+        return await self._get("/space/upstat", {"mid": self.uid})
 
     async def live_info(self) -> dict:
-        return await self.get("/space/acc/info", {"mid": self.uid})
-
+        return await self._get("/space/acc/info", {"mid": self.uid})
