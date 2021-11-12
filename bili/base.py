@@ -24,6 +24,10 @@ class Network:
                 raise ConnectionError(resp.status, await resp.read())
             return await resp.json()
 
+    async def websocket(self, host: str, path="/", port=443, wss=True) -> aiohttp.ClientWebSocketResponse:
+        return await self._session.ws_connect(f"{'wss' if wss else 'ws'}://"
+                                              f"{host}:{port}{path}")
+
 
 class APIBase:
     base = None
