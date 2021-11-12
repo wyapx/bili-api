@@ -10,9 +10,11 @@ def assert_success(data: dict) -> dict:
 class LiveDanmuPacket:
     @staticmethod
     def pack(data: bytes, proto_ver: int, pkg_type: int) -> bytes:
-        # 12 bytes header + datq
-        return struct.pack("!IHHII", 12, 16, proto_ver, pkg_type, 1) + data
+        # 16 bytes header + data
+        return struct.pack("!IHHII", 16 + len(data), 16, proto_ver, pkg_type, 1) + data
 
     @staticmethod
     def unpack(data: bytes):
-        pass
+        if len(data) < 16:
+            raise ValueError("not a valid pack")
+        return struct.unpack("!IHHII", data[:16]), data[16:]
