@@ -9,6 +9,7 @@ class User(APIBase):
         self.uid = uid
 
     async def my_info(self) -> dict:
+        await self.verify_auth()
         return await self._get("/space/myinfo")
 
     async def info(self) -> dict:
